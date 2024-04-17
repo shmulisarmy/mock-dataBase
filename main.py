@@ -18,7 +18,7 @@ from collections import defaultdict
 returnsDefaultDict = lambda: defaultdict(returnsDefaultDict)
 
 
-
+tables = {}
 
 class Col:
     def __init__(self, colName: str, colType: type):
@@ -237,6 +237,36 @@ class Table:
                 self.updating[row[self.colPositions["id"]]] = False
 
 
+dataTypes = {"int": int, "str": str, "float": float, "bool": bool, "text": str, "date": str}
+
+def execute(query: str):
+    words = query.split(" ")
+    if words[:2] == ["create", "table"]:
+        tableName = words[2]
+        inBrackets = query.split("(")[1].split(")")[0].split(",")
+        inBrackets = [word.split(" ") for word in inBrackets]
+        cols = [Col(colName, dataTypes[colType]) for colName, colType in inBrackets]
+        tables[tableName] = Table(*cols)
+
+    if words[0] == ".tables":
+        print(list(tables.keys()))
+
+    if words[:2] == ["drop", "table"]:
+        tableName = words[2]
+        del tables[tableName]
+
+    if words[:3] == ["Select", "*", "from"]:
+        tableName = words[2]
+        print(tables[tableName].getAll())
+
+
+
+execute("create table users (username text,password text)")
+execute(".tables")
+execute("drop table users")
+execute(".tables")
+
+
 if __name__ == "__main__":
 
 
@@ -266,13 +296,13 @@ if __name__ == "__main__":
     # print(f"{users.getByIndex(0) = }")
     # print(f"\n"*5)
 
-    print("\n"*5)
-    print(f"{users.getByIndexIfExists('username', 'shmuli') = }")
-    print(f"{users.getByIndexIfExists('username', 'bunny') = }")
-    users.updateFirst("password", "ngix", "username", "bunny")
-    print(f"{users.getAll(['username'], ['password'], ['keller']) = }")
-    print(f"{users.getFirst(None, ['password'], ['ngix']) = }")
-    print(f"{users.getFirst(['username'], ['password'], ['ngix']) = }")
+    # print("\n"*5)
+    # print(f"{users.getByIndexIfExists('username', 'shmuli') = }")
+    # print(f"{users.getByIndexIfExists('username', 'bunny') = }")
+    # users.updateFirst("password", "ngix", "username", "bunny")
+    # print(f"{users.getAll(['username'], ['password'], ['keller']) = }")
+    # print(f"{users.getFirst(None, ['password'], ['ngix']) = }")
+    # print(f"{users.getFirst(['username'], ['password'], ['ngix']) = }")
 
 
         
