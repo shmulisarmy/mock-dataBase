@@ -121,7 +121,8 @@ class Table:
     
     def getAll(self, lookingFors: list[str]|None = None, 
                     wheres: list[str]|None = None, 
-                    values: list[str]|None = None) -> list[list]:
+                    values: list[str]|None = None,
+                    reverse: bool = False) -> list[list]:
         """used to get all rows that match the where clause"""
 
         if wheres and any(i not in self.colPositions for i in wheres):
@@ -131,7 +132,12 @@ class Table:
         rows = []
         lookAtLater = []
 
-        for index, row in enumerate(self.tableContents):
+        tc_en = enumerate(self.tableContents)
+
+        if reverse:
+            tc_en.reverse()
+
+        for index, row in tc_en:
             if self.updating[index]:
                 lookAtLater.append(index)
                 continue
